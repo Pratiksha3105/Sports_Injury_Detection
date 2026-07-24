@@ -1,62 +1,75 @@
 # Installation Guide
 
 ## Prerequisites
-- Node.js 18+ (or Bun, since `bun.lock` is present)
-- A Supabase project (free tier is fine)
+- Node.js 18+ and npm
+- Python 3.10+
+- MySQL 8+
 - Git
 
-## 1. Install dependencies
+## 1. Clone / extract the project
 ```bash
+git clone <your-repo-url>
+cd Sports-Injury-Risk-Detection
+```
+
+## 2. Database setup
+```bash
+mysql -u root -p < database/schema.sql
+```
+This creates the `sports_injury_db` database with all tables and default roles.
+
+## 3. Backend setup
+```bash
+cd backend
+python -m venv venv
+source venv/bin/activate        # Windows: venv\Scripts\activate
+pip install -r requirements.txt
+cp .env.example .env
+```
+Edit `.env` and set `DATABASE_URL` to match your MySQL credentials, e.g.:
+```
+DATABASE_URL=mysql+pymysql://root:yourpassword@localhost:3306/sports_injury_db
+```
+
+Enable table creation on first run by uncommenting this line in `app/main.py`:
+```python
+Base.metadata.create_all(bind=engine)
+```
+(Only needed once, or use Alembic migrations for anything beyond Milestone 1.)
+
+Run the API:
+```bash
+uvicorn app.main:app --reload
+```
+Visit http://localhost:8000/docs for interactive API documentation.
+
+## 4. Frontend setup
+```bash
+cd ../frontend
 npm install
-# or, since this project includes a bun.lock:
-bun install
+cp .env.example .env
 ```
+Ensure `VITE_API_BASE_URL` in `.env` points to your running backend
+(default `http://localhost:8000/api/v1`).
 
-## 2. Configure environment variables
-Copy `.env` to see the required keys (or create `.env` fresh):
-```
-SUPABASE_PROJECT_ID=your-project-id
-SUPABASE_URL=https://your-project-id.supabase.co
-SUPABASE_PUBLISHABLE_KEY=your-anon-public-key
-
-VITE_SUPABASE_PROJECT_ID=your-project-id
-VITE_SUPABASE_URL=https://your-project-id.supabase.co
-VITE_SUPABASE_PUBLISHABLE_KEY=your-anon-public-key
-```
-Both a server-side (`SUPABASE_*`) and client-side (`VITE_SUPABASE_*`) copy
-are required because this app uses TanStack Start's SSR — some code runs
-on the server and some in the browser.
-
-> The AI analysis feature also needs a Lovable AI Gateway API key at
-> runtime (see `src/lib/ai-gateway.server.ts`). If you're running this
-> outside of Lovable's hosting, you'll need to supply your own key and
-> point `baseURL` at a compatible OpenAI-style endpoint, or swap in your
-> own provider (e.g. OpenAI, Anthropic) via the `ai` SDK.
-
-## 3. Apply the database schema
-The schema lives in `supabase/migrations/`. If you're using the Supabase CLI:
-```bash
-supabase link --project-ref your-project-id
-supabase db push
-```
-Or paste the contents of each file in `supabase/migrations/` into the
-Supabase Dashboard → SQL Editor, in filename order.
-
-## 4. Run locally
+Run the dev server:
 ```bash
 npm run dev
 ```
-Visit http://localhost:3000 (TanStack Start's default dev port — check
-your terminal output for the exact URL).
+Visit http://localhost:5173.
 
-## 5. Verify the flow
-1. Go to `/auth`, create an account (choose Athlete or Coach)
-2. You'll be redirected to `/profile` — fill in your athlete details and save
-3. Go to `/` (home), upload a short sports clip, choose a granularity, and click Analyze
-4. Review the AI-generated report, check the history panel, and try exporting a PDF
+## 5. Verify the full flow
+1. Open the frontend, click **Register**, create an athlete account.
+2. Log in.
+3. You should land on `/dashboard` with the sidebar, stat cards, and
+   sample chart visible.
+4. Visit `/dashboard/upload` and drag in any local `.mp4` file — this
+   simulates the upload flow (no real processing happens in Milestone 1).
 
-## Build for production
-```bash
-npm run build
-npm run preview
-```
+## Troubleshooting
+| Symptom | Likely cause |
+|---|---|
+| Frontend loads but login fails | Backend not running, or `VITE_API_BASE_URL` mismatch |
+| `Access denied for user` on MySQL | Wrong credentials in `backend/.env` |
+| CORS errors in the browser console | Add your frontend origin to `CORS_ORIGINS` in `backend/.env` |
+| `ModuleNotFoundError` in FastAPI | Virtual environment not activated before `pip install` |

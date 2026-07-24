@@ -1,18 +1,24 @@
-# Screenshots
+# Milestone 1 Completed
 
-Capture these directly from the running app for your submission, since the
-UI includes charts, gradients, and interactive states best shown live.
+## Completed Modules
 
-```bash
-npm install
-npm run dev
-```
+- Repository setup and initialization
+- React + Vite frontend setup
+- UI wireframes and responsive design
+- Athlete profile management planning
+- Video upload module setup
+- AI architecture planning using MediaPipe, YOLO and LSTM
+- Database schema design
+- Report generation module planning
 
-Suggested shots:
-1. `/` — empty upload state
-2. `/` — a completed analysis report (radar chart + injury risks + timeline)
-3. `/auth` — sign up tab with role selection
-4. `/profile` — filled-in athlete profile
-5. PDF export opened from a report
+## Technologies Used
 
-See `../wireframes/` for layout references you can use right away.
+- React
+- Vite
+- TypeScript
+- Tailwind CSS
+- PostgreSQL / Supabase
+- MediaPipe
+- YOLO
+- LSTM
+- Git & GitHub

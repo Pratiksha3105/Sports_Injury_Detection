@@ -2,44 +2,37 @@
 
 ```mermaid
 flowchart LR
-    subgraph Browser
-        UI["React 19 UI<br/>(routes: /, /auth, /profile)"]
-        Canvas["Canvas frame extractor"]
-        LS[("localStorage<br/>analysis history")]
+    subgraph Client["Browser"]
+        FE["React + Vite SPA<br/>Tailwind · Framer Motion"]
     end
 
-    subgraph Server["TanStack Start Server"]
-        SFN["Server Function<br/>analyzePose()"]
+    subgraph Server["Application Server"]
+        API["FastAPI<br/>JWT Auth · REST Endpoints"]
+        ORM["SQLAlchemy ORM"]
     end
 
-    subgraph Supabase["Supabase (Postgres)"]
-        Auth["Auth (email/password)"]
-        DB[("profiles · user_roles<br/>Row-Level Security")]
+    subgraph Data["Data Layer"]
+        DB[("MySQL<br/>sports_injury_db")]
     end
 
-    subgraph AI["Lovable AI Gateway"]
-        LLM["Vision-capable LLM<br/>(structured JSON output)"]
+    subgraph Future["Milestone 2+ (not built yet)"]
+        CV["OpenCV frame extraction"]
+        MP["MediaPipe pose estimation"]
+        LSTM["LSTM risk classifier"]
     end
 
-    UI -- "sign in / sign up" --> Auth
-    Auth -- "session" --> UI
-    UI -- "profile read/write" --> DB
+    FE -- "HTTPS / JSON (axios)" --> API
+    API --> ORM --> DB
+    API -.-> CV -.-> MP -.-> LSTM -.-> API
 
-    UI --> Canvas --> UI
-    UI -- "sampled frames + sport + notes" --> SFN
-    SFN -- "prompt" --> LLM
-    LLM -- "structured analysis JSON" --> SFN
-    SFN -- "validated result" --> UI
-    UI -- "save/compare" --> LS
+    style Future stroke-dasharray: 5 5
 ```
 
-## Why this shape?
-- **No video ever hits a server or database** — frames are sampled and
-  downscaled entirely in the browser via `<canvas>`, keeping the app
-  free of video storage/streaming infrastructure.
-- **Auth and profile data live in Supabase**, protected by Row-Level
-  Security, so a user can only ever read/write their own profile (with a
-  narrow, function-gated exception for coaches).
-- **Analysis is stateless and on-demand** — the server function is a thin
-  validation + prompting layer between the browser and the AI gateway; it
-  doesn't persist anything itself. History lives client-side.
+## Layer responsibilities
+
+| Layer | Responsibility | Milestone 1 status |
+|---|---|---|
+| Client | Rendering, routing, client-side validation, token storage | ✅ Complete |
+| Application Server | Auth, request validation, business rules | ✅ Foundation complete |
+| Data Layer | Persistent storage of users, athletes, videos, predictions | ✅ Schema complete |
+| AI Pipeline | Frame extraction → pose estimation → risk classification | ⏳ Milestone 2–4 |
