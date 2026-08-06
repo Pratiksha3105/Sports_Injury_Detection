@@ -1,0 +1,226 @@
+@import "tailwindcss";
+
+/* ============================================================
+   KINETIC — Design Tokens
+   A biomechanics-lab aesthetic: cool paper background, deep
+   pine ink, instrument-panel data readouts in mono type, and a
+   risk color scale that carries real meaning (not decoration).
+   ============================================================ */
+@theme {
+  --font-display: "Space Grotesk", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  --color-paper: #f4f5f1;
+  --color-paper-dim: #eceee7;
+  --color-ink: #16211b;
+  --color-ink-soft: #3b453e;
+  --color-muted: #6b756e;
+  --color-line: #d9ded6;
+  --color-panel: #ffffff;
+
+  --color-accent: #0f6b5c;
+  --color-accent-soft: #dcece7;
+  --color-accent-strong: #0a4f44;
+
+  --color-risk-low: #2e8b57;
+  --color-risk-low-soft: #e2f1e8;
+  --color-risk-moderate: #c69117;
+  --color-risk-moderate-soft: #f6ecd2;
+  --color-risk-high: #d9622b;
+  --color-risk-high-soft: #f8e3d5;
+  --color-risk-critical: #c23b3b;
+  --color-risk-critical-soft: #f6dcdc;
+
+  /* --- Premium surface layer: used by hero/auth sections and the
+     ambient background system. Additive — nothing above changes. --- */
+  --color-deep: #071410;
+  --color-deep-2: #0c2119;
+  --color-deep-3: #0f2a20;
+  --color-glass-border: rgba(255, 255, 255, 0.12);
+  --color-glass-fill: rgba(255, 255, 255, 0.06);
+  --color-on-deep: #eef4f0;
+  --color-on-deep-soft: rgba(238, 244, 240, 0.68);
+  --color-glow: #35c9a5;
+}
+
+@layer base {
+  html {
+    background-color: var(--color-paper);
+  }
+  body {
+    font-family: var(--font-body);
+    color: var(--color-ink);
+    background-color: var(--color-paper);
+    background-image:
+      linear-gradient(var(--color-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--color-line) 1px, transparent 1px);
+    background-size: 64px 64px;
+    background-position: -1px -1px;
+    background-attachment: fixed;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection {
+    background: var(--color-accent);
+    color: var(--color-paper);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer utilities {
+  .font-display { font-family: var(--font-display); }
+  .font-mono-data { font-family: var(--font-mono); }
+
+  /* Every existing consumer of `.panel` gets this upgrade for free:
+     soft elevation, rounded corners, a subtle hover lift. Border/bg
+     tokens are unchanged so the light "lab" palette is preserved. */
+  .panel {
+    background-color: color-mix(in srgb, var(--color-panel) 92%, transparent);
+    border: 1px solid var(--color-line);
+    border-radius: 0.875rem;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow:
+      0 1px 2px rgba(22, 33, 27, 0.04),
+      0 8px 24px -12px rgba(22, 33, 27, 0.10);
+    transition: box-shadow 220ms ease, transform 220ms ease, border-color 220ms ease;
+  }
+  .panel:hover {
+    box-shadow:
+      0 1px 2px rgba(22, 33, 27, 0.05),
+      0 16px 36px -14px rgba(22, 33, 27, 0.16);
+  }
+
+  .tick-label {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  /* --- Premium glass surface: dark, translucent, blurred — used on
+     the landing hero and auth screens over the ambient backdrop. --- */
+  .glass-card {
+    background: var(--color-glass-fill);
+    border: 1px solid var(--color-glass-border);
+    border-radius: 1.25rem;
+    backdrop-filter: blur(20px) saturate(140%);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.08) inset,
+      0 30px 60px -20px rgba(0, 0, 0, 0.55);
+  }
+
+  .deep-surface {
+    background:
+      radial-gradient(120% 90% at 15% 0%, color-mix(in srgb, var(--color-glow) 22%, transparent) 0%, transparent 55%),
+      radial-gradient(90% 70% at 100% 10%, color-mix(in srgb, var(--color-accent) 30%, transparent) 0%, transparent 60%),
+      linear-gradient(180deg, var(--color-deep) 0%, var(--color-deep-2) 55%, var(--color-deep-3) 100%);
+    color: var(--color-on-deep);
+  }
+
+  .glow-text {
+    background: linear-gradient(90deg, #ffffff 0%, var(--color-glow) 55%, #7ee8c7 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .btn-glow {
+    position: relative;
+    isolation: isolate;
+    transition: transform 180ms ease, box-shadow 220ms ease, filter 180ms ease;
+    box-shadow: 0 8px 24px -8px color-mix(in srgb, var(--color-accent) 60%, transparent);
+  }
+  .btn-glow:hover:not(:disabled) {
+    transform: translateY(-1px);
+    filter: brightness(1.06);
+    box-shadow: 0 12px 30px -8px color-mix(in srgb, var(--color-accent) 70%, transparent);
+  }
+  .btn-glow:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  .hover-lift {
+    transition: transform 220ms ease, box-shadow 220ms ease;
+  }
+  .hover-lift:hover {
+    transform: translateY(-2px);
+  }
+
+  /* Skeleton loading shimmer for premium loading states */
+  .skeleton {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-paper-dim);
+  }
+  .skeleton::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+    animation: shimmer 1.6s infinite;
+  }
+
+  .animate-fade-in {
+    animation: fade-in 420ms ease both;
+  }
+  .animate-fade-up {
+    animation: fade-up 480ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+}
+
+/* Pulsing LED used on the Kinetic Chain Readout for out-of-range joints */
+@keyframes led-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+.led-pulse {
+  animation: led-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Slow ambient drift used by <BackgroundFX />. Kept to transform/opacity
+   only so it's cheap to composite and never triggers layout/repaint. */
+@keyframes blob-drift-a {
+  0%   { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(4%, 6%) scale(1.08); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+@keyframes blob-drift-b {
+  0%   { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(-5%, -4%) scale(1.1); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+@keyframes blob-drift-c {
+  0%   { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(3%, -5%) scale(1.05); }
+  100% { transform: translate(0, 0) scale(1); }
+}

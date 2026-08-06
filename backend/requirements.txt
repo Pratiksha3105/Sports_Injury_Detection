@@ -1,0 +1,32 @@
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+python-multipart==0.0.9
+pydantic==2.9.2
+
+# Pinned deliberately: 0.10.14 is the last mediapipe release with the
+# legacy `mp.solutions.pose` API + model weights bundled in the wheel.
+# 0.10.30+ removed it in favor of the Tasks API, which requires downloading
+# a *.task model bundle from Google Cloud Storage at first run -- that will
+# fail in offline / network-restricted deployments. Do not upgrade this
+# without switching pose_estimator.py to the Tasks API and vendoring the
+# model file into the image.
+mediapipe==0.10.14
+
+opencv-python==4.10.0.84
+numpy==1.26.4
+scikit-learn==1.5.2
+xgboost==2.1.1
+pandas==2.2.2
+
+# --- Authentication & RBAC ---------------------------------------------
+sqlalchemy==2.0.35
+bcrypt==4.2.0
+PyJWT==2.9.0
+email-validator==2.2.0
+python-dotenv==1.0.1
+
+# --- PDF report export ---------------------------------------------------
+reportlab==4.2.5
+
+# --- AI assistant (calls the Anthropic API) -------------------------------
+httpx==0.27.2
