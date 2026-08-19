@@ -1,20 +1,28 @@
 # Python
-venv/
-backend/venv/
 __pycache__/
 *.py[cod]
-.pytest_cache/
-
-# Node
-node_modules/
+*.pyo
+.venv/
+venv/
 
 # Environment
 .env
-.env.*
 
-# VS Code
-.vscode/
-
-# Build
+# Node
+node_modules/
 dist/
-build/
+
+# Generated application files
+backend/storage/uploads/*
+backend/storage/annotated/*
+backend/storage/results/*
+
+# Local database
+backend/storage/*.db
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log

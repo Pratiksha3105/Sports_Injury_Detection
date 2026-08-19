@@ -275,4 +275,3 @@ Auth is layered on top of the existing app without touching the AI pipeline.
   token is kept in memory only (never localStorage), with silent
   refresh-on-401 via the httpOnly cookie so a page reload doesn't force a
   re-login.
-Milestone 3 completed
